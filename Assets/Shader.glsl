@@ -48,9 +48,12 @@ float floatConstruct( uint m ) {
 float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
 
 void drawLine(int index){
-    gl_Position = gl_in[0].gl_Position + vec4(cos(index) * cos(time), sin(index) * tan(time), 0.0, 0.0);
+    gl_Position = gl_in[0].gl_Position + vec4(cos(index) * cos(time), sin(index) * cos(time), 0.0, 0.0);
     EmitVertex();
-    gl_Position = gl_in[0].gl_Position + vec4(sin(index) * tan(time), cos(index) * sin(time), 0.0, 0.0);
+    if(int(time) % 10 == 1)
+        gl_Position = gl_in[0].gl_Position + vec4(sin(index) * tan(time), cos(index) * tan(time), 0.0, 0.0);
+    else
+        gl_Position = gl_in[0].gl_Position + vec4(sin(index) * tan(time), cos(index) * sin(time), 0.0, 0.0);
     EmitVertex();
 }
 

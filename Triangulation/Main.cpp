@@ -17,7 +17,7 @@ int main() {
     auto windowSettings = new WindowSettings;
     windowSettings->setWidth(1600);
     windowSettings->setHeight(800);
-    windowSettings->setFocused(false);
+    windowSettings->setFocused(true);
     windowSettings->setResizable(true);
     windowSettings->setSwapInterval(0);
     windowSettings->setDecorated(true);

@@ -21,4 +21,5 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/Dependencies/OpenGL/OpenGL.a
         ${CMAKE_CURRENT_LIST_DIR}/Dependencies/Math/Math.a
+        opengl32.lib
         )

@@ -4,12 +4,12 @@
 #include <iostream>
 
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    HWND p = FindWindowEx(hwnd, NULL, reinterpret_cast<LPCSTR>(L"SHELLDLL_DefView"), NULL);
+    HWND p = FindWindowEx(hwnd, NULL, reinterpret_cast<LPCSTR>("SHELLDLL_DefView"), NULL);
     HWND *ret = (HWND *) lParam;
 
     if (p) {
 // Gets the WorkerW Window after the current one.
-        *ret = FindWindowEx(NULL, hwnd, reinterpret_cast<LPCSTR>(L"WorkerW"), NULL);
+        *ret = FindWindowEx(NULL, hwnd, reinterpret_cast<LPCSTR>("WorkerW"), NULL);
     }
 
     return true;
@@ -17,7 +17,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 
 HWND GetWallpaperWindow() {
     // Fetch the Progman window
-    HWND progman = FindWindow(reinterpret_cast<LPCSTR>(L"ProgMan"), NULL);
+    HWND progman = FindWindow(reinterpret_cast<LPCSTR>("ProgMan"), NULL);
     // Send 0x052C to Progman. This message directs Progman to spawn a
     // WorkerW behind the desktop icons. If it is already there, nothing
     // happens.
@@ -73,28 +73,10 @@ int main() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        #define MAX_POINTS 1
-        #define POINT_SPEED 0.0005
-
-        struct Point {
-            float x = 0, y = 0, dirX = 0, dirY = 0;
-        };
-
-        Point coords[MAX_POINTS] = {};
-
-        for (int i = 0; i < MAX_POINTS; i++) {
-            coords[i].dirX = float(rand() - RAND_MAX / 2) / RAND_MAX;
-            coords[i].dirY = float(rand() - RAND_MAX / 2) / RAND_MAX;
-        }
-
         while (true) {
-            //for (int i = 0; i < MAX_POINTS; i++) {
-            //    auto coord = coords[i];
-            //    coords[i].x += coord.dirX * POINT_SPEED;
-            //    coords[i].y += coord.dirY * POINT_SPEED;
-            //}
             glClear(GL_COLOR_BUFFER_BIT);
-//            shader.setUniform2fv("coords", MAX_POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
+            glClearColor(0.5, 1.0, 0.5, 1.0);
+//           shader.setUniform2fv("coords", MAX_POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
             glDrawArrays(GL_POINTS, 0, 1);
             SwapBuffers(hdc);
         }

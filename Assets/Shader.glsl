@@ -31,10 +31,8 @@ void main(){
 #fragment
 #version 330 core
 
-uniform float time;
-
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(sin(time) + 1 / 2, cos(time) + 1 / 2, tan(time) + 1 / 2, 1.0);
+    FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }

@@ -1,18 +1,7 @@
-#include "Window/Window.h"
+#include <windows.h>
 #include <Shader.h>
 #include <Buffer.h>
 #include <iostream>
-#include <windows.h>
-
-static void frameBufferSize(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
-static void mousePositionCallback(GLFWwindow *window, double x, double y) {
-}
-
-static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-}
 
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
     HWND p = FindWindowEx(hwnd, NULL, reinterpret_cast<LPCSTR>(L"SHELLDLL_DefView"), NULL);
@@ -38,21 +27,14 @@ HWND GetWallpaperWindow() {
     // If we found that window, we take its next sibling and assign it to workerw.
     HWND wallpaper_hwnd = nullptr;
     EnumWindows(EnumWindowsProc, (LPARAM) &wallpaper_hwnd);
-    // Return the handle you're looking for.
     return wallpaper_hwnd;
 }
 
-// You can also use `int main()`
-int APIENTRY WinMain(HINSTANCE hCurrentInst, HINSTANCE hPreviousInst, LPSTR lpszCmdLine, int nCmdShow) {
+int main() {
     // Get the HWND for the desktop background window
     HWND window = GetWallpaperWindow();
-
-    // Get the drawing context
     HDC hdc = GetDC(window);
-
-    // The pixel format to use for OpenGL
-    PIXELFORMATDESCRIPTOR pfd =
-            {
+    PIXELFORMATDESCRIPTOR pfd = {
                     sizeof(PIXELFORMATDESCRIPTOR),
                     1,
                     PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
@@ -78,19 +60,12 @@ int APIENTRY WinMain(HINSTANCE hCurrentInst, HINSTANCE hPreviousInst, LPSTR lpsz
 
     // Create the OpenGL context
     if (HGLRC hglrc = wglCreateContext(hdc)) {
-        // Make context current for this thread
         wglMakeCurrent(hdc, hglrc);
-
-        // Load OpenGL fuction pointers
         // OpenGL 1.1 is supported by default without needing to explicitly load functions
-
-        // Load with glad2
         if (!gladLoadGL()) {
             std::cout << "Failed to init GLAD\n";
-            return;
-            // Loading OpenGL functions failed
         }
-        hader shader("../Assets/Shader.glsl");
+        Shader shader("../Assets/Shader.glsl");
         shader.bind();
         std::cout << shader.getErrorMessage();
         glLineWidth(1);
@@ -113,35 +88,20 @@ int APIENTRY WinMain(HINSTANCE hCurrentInst, HINSTANCE hPreviousInst, LPSTR lpsz
         }
 
         while (true) {
-            // Perform rendering
-
-            // Swap the front and back buffers
+            //for (int i = 0; i < MAX_POINTS; i++) {
+            //    auto coord = coords[i];
+            //    coords[i].x += coord.dirX * POINT_SPEED;
+            //    coords[i].y += coord.dirY * POINT_SPEED;
+            //}
+            glClear(GL_COLOR_BUFFER_BIT);
+//            shader.setUniform2fv("coords", MAX_POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
+            glDrawArrays(GL_POINTS, 0, 1);
             SwapBuffers(hdc);
         }
-
-        // After the loop ends, unset the context and delete it
         wglMakeCurrent(NULL, NULL);
         wglDeleteContext(hglrc);
         ReleaseDC(window, hdc);
     } else {
         std::cout << "Failed to create GL Context\n";
-    }
-}
-
-int main() {
-
-    while (window.windowIsAlive()) {
-        for (int i = 0; i < MAX_POINTS; i++) {
-            auto coord = coords[i];
-            coords[i].x += coord.dirX * POINT_SPEED;
-            coords[i].y += coord.dirY * POINT_SPEED;
-        }
-        glClear(GL_COLOR_BUFFER_BIT);
-        shader.setUniform1f("time", glfwGetTime());
-        shader.setUniform2fv("coords", MAX_POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
-        glDrawArrays(GL_POINTS, 0, 1);
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            window.destroyWindow();
-        window.updateWindow();
     }
 }

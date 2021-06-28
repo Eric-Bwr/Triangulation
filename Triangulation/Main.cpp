@@ -62,15 +62,27 @@ int main() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         POINT mouse;
-        float time = 0;
+        //glViewport(0, 0, 1920 * 2, 1080);
+        const int POINTS = 100;
+        float coords[POINTS * 2] = {};
+        float coordsDir[POINTS * 2] = {};
+        for(int i = 0; i < POINTS * 2; i += 2){
+            coords[i] = (float(rand()) / RAND_MAX * 2) - 1;
+            coords[i + 1] = (float(rand()) / RAND_MAX * 2)  - 1;
+            coordsDir[i] = (float(rand()) / RAND_MAX * 2)  - 1;
+            coordsDir[i + 1] = (float(rand()) / RAND_MAX * 2)  - 1;
+        }
+        shader.setUniform1f("points", POINTS);
         while (!(GetKeyState(VK_ESCAPE) & 0x8000)) {
-            time += 0.001;
+            for(int i = 0; i < POINTS * 2; i += 2){
+                coords[i] += coordsDir[i] * 0.005;
+                coords[i + 1] += coordsDir[i + 1] * 0.005;
+            }
             GetCursorPos(&mouse);
             glClear(GL_COLOR_BUFFER_BIT);
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            shader.setUniform1f("time", time);
-           // shader.setUniform2f("mouse", mouse.x, mouse.y);
-//           shader.setUniform2fv("coords", MAX_POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
+            shader.setUniform2f("mouse", mouse.x, mouse.y);
+            shader.setUniform2fv("coords", POINTS * sizeof(float) * 2, reinterpret_cast<const float *>(coords));
             glDrawArrays(GL_POINTS, 0, 1);
             Sleep(1);
             SwapBuffers(hdc);

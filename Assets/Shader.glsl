@@ -8,24 +8,23 @@ void main() {
     #geometry
     #version 330 core
 
-#define VERT 400
+#define POINTS 100
+#define POINTS_VERT 200
 
 layout (points) in;
-layout (line_strip, max_vertices = 800) out;
+layout (line_strip, max_vertices = POINTS_VERT) out;
 
 uniform vec2 mouse;
-uniform float time;
+uniform vec2 coords[POINTS];
 
-void drawLine(int index){
-    gl_Position = vec4(cos(index) * cos(time), sin(index) * cos(time), 0.0, 1.0);
-    EmitVertex();
-    gl_Position = vec4(sin(index) * tan(time), cos(index) * sin(time), 0.0, 1.0);
+void drawPoint(int index){
+    gl_Position = vec4(coords[index].x, coords[index].y, 0.0, 1.0);
     EmitVertex();
 }
 
 void main(){
-    for(int i = 0; i < VERT; i++){
-        drawLine(i);
+    for(int i = 0; i < POINTS; i += 2){
+        drawPoint(i);
     }
    //gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
    //EmitVertex();
@@ -37,8 +36,10 @@ void main(){
     #fragment
     #version 330 core
 
+uniform float time;
+
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    FragColor = vec4(sin(time) + 1 / 2, cos(time) + 1 / 2, tan(time) + 1 / 2, 1.0);
 }
